@@ -44,7 +44,11 @@ module.exports = yeoman.Base.extend({
     tplPaths.forEach(path => {
       this.fs.copyTpl(
         this.templatePath(path),
-        this.destinationPath(path.replace(/foo/g, this.props.crud)),
+        this.destinationPath(
+          path
+          .replace(/foo/g, this.props.crud)
+          .replace(/v1/g, `v${this.props.version}`)
+        ),
         {crud: this.props.crud, version: this.props.version}
       );
     });
