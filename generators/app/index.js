@@ -22,6 +22,13 @@ module.exports = yeoman.Base.extend({
         name: 'crud',
         message: 'What\'s the crud name?',
         default: 'test'
+      },
+      {
+        type: 'list',
+        name: 'database',
+        message: 'What\'s the database?',
+        default: 'neo4j',
+        choices: ['arango', 'neo4j']
       }
     ];
 
@@ -40,6 +47,8 @@ module.exports = yeoman.Base.extend({
       'src/v1/routes/foo/fooRoute.js',
       'src/v1/routes/foo/index.js'
     ];
+
+    this.sourceRoot(`${__dirname}/templates/${this.props.database}`);
 
     tplPaths.forEach(path => {
       this.fs.copyTpl(
