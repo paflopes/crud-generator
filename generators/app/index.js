@@ -28,7 +28,7 @@ module.exports = yeoman.Base.extend({
         name: 'database',
         message: 'What\'s the database?',
         default: 'neo4j',
-        choices: ['arango', 'neo4j']
+        choices: ['mongo', 'arango', 'neo4j']
       }
     ];
 
