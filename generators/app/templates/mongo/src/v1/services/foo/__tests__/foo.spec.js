@@ -4,7 +4,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ErrorDAO from '../../../../dao/errorDAO';
 import databaseDecorator from '../../../../databaseDecorator';
-import foo from '../index';
+import <%= crud %> from '../index';
 
 chai.use(chaiAsPromised);
 
@@ -12,9 +12,9 @@ const expect = chai.expect;
 
 let seneca;
 
-const examplefoo = {foo: 'bar'};
+const example<%= crud %> = {<%= crud %>: 'bar'};
 
-describe('foo service', () => {
+describe('<%= crud %> service', () => {
   let dao;
   let db;
 
@@ -25,7 +25,7 @@ describe('foo service', () => {
     seneca
     .use('user')
     .use('entity')
-    .use(foo)
+    .use(<%= crud %>)
     .use(databaseDecorator);
 
     await seneca.readyAsync();
@@ -39,122 +39,104 @@ describe('foo service', () => {
   });
 
   afterEach(async () => {
-    await db.collection('foo').drop().catch(() => {});
+    await db.collection('<%= crud %>').drop().catch(() => {});
   });
 
-  it('should save a foo', async () => {
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: examplefoo})
-    .then(response => {
-      expect(response).to.have.deep.property('result._id');
-      expect(response).to.have.deep.property('result.foo', examplefoo.foo);
-      return response.result._id;
-    })
-    .then(id => dao.findOne('foo', id))
-    .then(response => {
-      expect(response).to.have.deep.property('_id');
-      expect(response).to.have.deep.property('foo', examplefoo.foo);
+  it('should save a <%= crud %>', async () => {
+    let response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: example<%= crud %>});
+    expect(response).to.have.deep.property('result._id');
+    expect(response).to.have.deep.property('result.<%= crud %>', example<%= crud %>.<%= crud %>);
+
+    response = await dao.findOne('<%= crud %>', response.result._id);
+
+    expect(response).to.have.deep.property('_id');
+    expect(response).to.have.deep.property('<%= crud %>', example<%= crud %>.<%= crud %>);
+  });
+
+  it('should get a single <%= crud %>', async () => {
+    let response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: example<%= crud %>});
+
+    response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:findOne', {<%= crud %>id: response.result._id});
+    expect(response).to.have.deep.property('result._id');
+    expect(response).to.have.deep.property('result.<%= crud %>', example<%= crud %>.<%= crud %>);
+
+    response = await dao.findOne('<%= crud %>', response.result._id);
+    expect(response).to.have.deep.property('_id');
+    expect(response).to.have.deep.property('<%= crud %>', example<%= crud %>.<%= crud %>);
+  });
+
+  it('should update some <%= crud %> fields', async () => {
+    let response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: example<%= crud %>});
+    const id = response.result._id;
+    response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:update', {
+      <%= crud %>id: id, <%= crud %>: {baz: 'it worked'}
     });
+
+    expect(response).to.have.deep.property('result._id');
+    expect(response).to.have.deep.property('result.<%= crud %>', example<%= crud %>.<%= crud %>);
+    expect(response).to.have.deep.property('result.baz', 'it worked');
+
+    response = await dao.findOne('<%= crud %>', id);
+    expect(response).to.have.deep.property('_id');
+    expect(response).to.have.deep.property('<%= crud %>', example<%= crud %>.<%= crud %>);
+    expect(response).to.have.deep.property('baz', 'it worked');
   });
 
-  it('should get a single foo', () => {
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: examplefoo})
-    .then(response => response.result._id)
-    .then(id => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:findOne', {fooid: id}))
-    .then(response => {
-      expect(response).to.have.deep.property('result._id');
-      expect(response).to.have.deep.property('result.foo', examplefoo.foo);
-      return response.result._id;
-    })
-    .then(id => dao.findOne('foo', id))
-    .then(response => {
-      expect(response).to.have.deep.property('_id');
-      expect(response).to.have.deep.property('foo', examplefoo.foo);
-    });
+  it('should list all <%= crud %>s', async () => {
+    const <%= crud %>s = [
+      {<%= crud %>: 'bar1'},
+      {<%= crud %>: 'bar2'},
+      {<%= crud %>: 'bar3'}
+    ];
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[0]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[1]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[2]});
+    const response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:list');
+
+    expect(response).to.have.deep.property('result').to.have.length(3);
   });
 
-  it('should update some foo fields', () => {
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: examplefoo})
-    .then(response => response.result._id)
-    .then(id => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:update', {
-      fooid: id, foo: {baz: 'it worked'}
-    }))
-    .then(response => {
-      expect(response).to.have.deep.property('result._id');
-      expect(response).to.have.deep.property('result.foo', examplefoo.foo);
-      expect(response).to.have.deep.property('result.baz', 'it worked');
-      return response.result._id;
-    })
-    .then(id => dao.findOne('foo', id))
-    .then(response => {
-      expect(response).to.have.deep.property('_id');
-      expect(response).to.have.deep.property('foo', examplefoo.foo);
-      expect(response).to.have.deep.property('baz', 'it worked');
-    });
-  });
-
-  it('should list all foos', () => {
-    const foos = [
-      {foo: 'bar1'},
-      {foo: 'bar2'},
-      {foo: 'bar3'}
+  it('should skip <%= crud %>', async () => {
+    const <%= crud %>s = [
+      {<%= crud %>: 'bar1'},
+      {<%= crud %>: 'bar2'},
+      {<%= crud %>: 'bar3'}
     ];
 
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[0]})
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[1]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[2]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:list'))
-    .then(response => {
-      expect(response).to.have.deep.property('result').to.have.length(3);
-    });
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[0]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[1]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[2]});
+    const response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:list', {skip: 1});
+
+    expect(response).to.have.deep.property('result').to.have.length(2);
   });
 
-  it('should skip foo', () => {
-    const foos = [
-      {foo: 'bar1'},
-      {foo: 'bar2'},
-      {foo: 'bar3'}
+  it('should limit <%= crud %>', async () => {
+    const <%= crud %>s = [
+      {<%= crud %>: 'bar1'},
+      {<%= crud %>: 'bar2'},
+      {<%= crud %>: 'bar3'}
     ];
 
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[0]})
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[1]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[2]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:list', {skip: 1}))
-    .then(response => {
-      expect(response).to.have.deep.property('result').to.have.length(2);
-    });
-  });
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[0]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[1]});
+    await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: <%= crud %>s[2]});
+    const response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:list', {limit: 1});
 
-  it('should limit foo', () => {
-    const foos = [
-      {foo: 'bar1'},
-      {foo: 'bar2'},
-      {foo: 'bar3'}
-    ];
-
-    return seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[0]})
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[1]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: foos[2]}))
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:list', {limit: 1}))
-    .then(response => {
-      expect(response).to.have.deep.property('result').to.have.length(1);
-    });
+    expect(response).to.have.deep.property('result').to.have.length(1);
   });
 
 
-  it('should remove a foo', () => {
-    let id;
-    const action =
-    seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {foo: examplefoo})
-    .then(response => id = response.result._id)
-    .then(() => seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:remove', {
-      fooid: id
-    }))
-    .then(response =>
-      expect(response).to.have.deep.property('result', 'foo removed')
-    )
-    .then(() => dao.findOne('foo', id));
+  it('should remove a <%= crud %>', async () => {
+    let response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {<%= crud %>: example<%= crud %>});
+    const id = response.result._id;
 
-    return expect(action).to.be.rejectedWith(ErrorDAO);
+    response = await seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:remove', {
+      <%= crud %>id: id
+    });
+
+    expect(response).to.have.deep.property('result', '<%= crud %> removed');
+    expect(dao.findOne('<%= crud %>', id)).to.be.rejectedWith(ErrorDAO);
   });
 
 });

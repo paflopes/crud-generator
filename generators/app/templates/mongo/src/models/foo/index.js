@@ -1,3 +1,3 @@
-import {fooSchema} from './fooSchema';
+import {<%= crud %>Schema} from './<%= crud %>Schema';
 
-export {fooSchema};
+export {<%= crud %>Schema};

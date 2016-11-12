@@ -1,9 +1,9 @@
 import Joi from 'joi';
 
-const fooSchema = {
+const <%= crud %>Schema = {
   _id: Joi.string().min(3).optional(),
-  foo: Joi.string().default('foo').min(3),
+  <%= crud %>: Joi.string().default('<%= crud %>').min(3),
   baz: Joi.string().min(3).optional()
 };
 
-export {fooSchema};
+export {<%= crud %>Schema};

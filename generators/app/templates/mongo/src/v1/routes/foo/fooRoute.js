@@ -1,16 +1,16 @@
 import Joi from 'joi';
 import Boom from 'boom';
 
-import {fooSchema} from '../../../models/foo';
+import {<%= crud %>Schema} from '../../../models/<%= crud %>';
 
 const register = function (server, options, next) {
   const seneca = server.seneca;
 
   server.route({
     method: 'GET',
-    path: '/{fooid}',
+    path: '/{<%= crud %>id}',
     handler: function (req, reply) {
-      seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:findOne', {...req.params})
+      seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:findOne', {...req.params})
       .then(response => {
         if (response.err) {
           return reply(Boom.badRequest(response.err));
@@ -19,12 +19,12 @@ const register = function (server, options, next) {
       });
     },
     config: {
-      description: 'Get a single foo',
-      notes: 'Get a single foo',
-      tags: ['api', 'foo'],
+      description: 'Get a single <%= crud %>',
+      notes: 'Get a single <%= crud %>',
+      tags: ['api', '<%= crud %>'],
       validate: {
         params: {
-          fooid: Joi.string().required().description('foo id')
+          <%= crud %>id: Joi.string().required().description('<%= crud %> id')
         }
       }
     },
@@ -34,7 +34,7 @@ const register = function (server, options, next) {
     method: 'GET',
     path: '/',
     handler: function (req, reply) {
-      seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:list', {...req.query})
+      seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:list', {...req.query})
       .then(response => {
         if (response.err) {
           return reply(Boom.badRequest(response.err));
@@ -43,9 +43,9 @@ const register = function (server, options, next) {
       });
     },
     config: {
-      description: 'List foos',
-      notes: 'List foos',
-      tags: ['api', 'foo'],
+      description: 'List <%= crud %>s',
+      notes: 'List <%= crud %>s',
+      tags: ['api', '<%= crud %>'],
       validate: {
         query: {
           limit: Joi.number().optional().description('limit query'),
@@ -59,7 +59,7 @@ const register = function (server, options, next) {
     method: 'POST',
     path: '/',
     handler: function (req, reply) {
-      seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:add', {...req.payload})
+      seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', {...req.payload})
       .then(response => {
         if (response.err) {
           return reply(Boom.badRequest(response.err));
@@ -68,12 +68,12 @@ const register = function (server, options, next) {
       });
     },
     config: {
-      description: 'Save foo',
-      notes: 'Save foo',
-      tags: ['api', 'foo'],
+      description: 'Save <%= crud %>',
+      notes: 'Save <%= crud %>',
+      tags: ['api', '<%= crud %>'],
       validate: {
         payload: {
-          foo: Joi.object().keys(fooSchema).required().description('foo object')
+          <%= crud %>: Joi.object().keys(<%= crud %>Schema).required().description('<%= crud %> object')
         }
       }
     },
@@ -81,9 +81,9 @@ const register = function (server, options, next) {
 
   server.route({
     method: 'PATCH',
-    path: '/{fooid}',
+    path: '/{<%= crud %>id}',
     handler: function (req, reply) {
-      seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:update', {
+      seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:update', {
         ...req.params,
         ...req.payload
       })
@@ -95,15 +95,15 @@ const register = function (server, options, next) {
       });
     },
     config: {
-      description: 'Update foo object',
-      notes: 'Update foo object',
-      tags: ['api', 'foo'],
+      description: 'Update <%= crud %> object',
+      notes: 'Update <%= crud %> object',
+      tags: ['api', '<%= crud %>'],
       validate: {
         params: {
-          fooid: Joi.string().required().description('foo id')
+          <%= crud %>id: Joi.string().required().description('<%= crud %> id')
         },
         payload: {
-          foo: Joi.object().keys(fooSchema).required().description('foo object')
+          <%= crud %>: Joi.object().keys(<%= crud %>Schema).required().description('<%= crud %> object')
         }
       }
     },
@@ -111,9 +111,9 @@ const register = function (server, options, next) {
 
   server.route({
     method: 'DELETE',
-    path: '/{fooid}',
+    path: '/{<%= crud %>id}',
     handler: function (req, reply) {
-      seneca.actAsync('v:1, sys:foo, area:foo, realm:foo ,cmd:remove', {...req.params})
+      seneca.actAsync('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:remove', {...req.params})
       .then(response => {
         if (response.err) {
           return reply(Boom.badRequest(response.err));
@@ -122,12 +122,12 @@ const register = function (server, options, next) {
       });
     },
     config: {
-      description: 'Delete foo',
-      notes: 'Delete foo',
-      tags: ['api', 'foo'],
+      description: 'Delete <%= crud %>',
+      notes: 'Delete <%= crud %>',
+      tags: ['api', '<%= crud %>'],
       validate: {
         params: {
-          fooid: Joi.string().required().description('foo id')
+          <%= crud %>id: Joi.string().required().description('<%= crud %> id')
         }
       }
     },
@@ -137,7 +137,7 @@ const register = function (server, options, next) {
 };
 
 register.attributes = {
-  name: 'foo',
+  name: '<%= crud %>',
   version: '1.0.0'
 };
 

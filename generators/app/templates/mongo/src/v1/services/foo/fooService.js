@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import _ from 'lodash';
-import {fooSchema} from '../../../models/foo';
+import {<%= crud %>Schema} from '../../../models/<%= crud %>';
 
 export default function() {
   const seneca = this;
@@ -9,11 +9,11 @@ export default function() {
   seneca.readyAsync()
   .then(async () => dao = await seneca.mongoDAO());
 
-  seneca.add('v:1, sys:foo, area:foo, realm:foo ,cmd:add', create);
-  seneca.add('v:1, sys:foo, area:foo, realm:foo ,cmd:update', updateFields);
-  seneca.add('v:1, sys:foo, area:foo, realm:foo ,cmd:list', findAll);
-  seneca.add('v:1, sys:foo, area:foo, realm:foo ,cmd:findOne', findOne);
-  seneca.add('v:1, sys:foo, area:foo, realm:foo ,cmd:remove', remove);
+  seneca.add('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:add', create);
+  seneca.add('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:update', updateFields);
+  seneca.add('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:list', findAll);
+  seneca.add('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:findOne', findOne);
+  seneca.add('v:<%= version %>, sys:<%= crud %>, area:<%= crud %>, realm:<%= crud %> ,cmd:remove', remove);
 
   const errorHandler = (cb) => {
     return (err) => {
@@ -24,46 +24,58 @@ export default function() {
     };
   };
 
-  function create(args, done) {
-    Joi.validateAsync(args.foo, fooSchema)
-    .then(foo => dao.save('foo', foo))
-    .then(result => done(null, {result}))
-    .catch(errorHandler(done));
+  async function create(args, done) {
+    try {
+      const <%= crud %> = await Joi.validateAsync(args.<%= crud %>, <%= crud %>Schema);
+      const result = await dao.save('<%= crud %>', <%= crud %>);
+      done(null, {result});
+    } catch (e) {
+      errorHandler(done)(e);
+    }
   }
 
-  function updateFields(args, done) {
-    dao.findOne('foo', args.fooid)
-    .then(response => {
-      const newObj = _.merge({}, response, args.foo);
-      return Joi.validateAsync(newObj, fooSchema);
-    })
-    .then(foo => dao.save('foo', foo))
-    .then(result => done(null, {result}))
-    .catch(() => errorHandler(done));
+  async function updateFields(args, done) {
+    try {
+      const response = await dao.findOne('<%= crud %>', args.<%= crud %>id);
+      const newObj = _.merge({}, response, args.<%= crud %>);
+      const <%= crud %> = await Joi.validateAsync(newObj, <%= crud %>Schema);
+      const result = await dao.save('<%= crud %>', <%= crud %>);
+      done(null, {result});
+    } catch (e) {
+      errorHandler(done)(e);
+    }
   }
 
-  function findAll(args, done) {
+  async function findAll(args, done) {
     const opts = {
       skip: Number.parseInt(args.skip),
       limit: Number.parseInt(args.limit)
     };
 
-    dao.list('foo', null, opts)
-    .then(result => result)
-    .then(result => done(null, {result}))
-    .catch(errorHandler(done));
+    try {
+      const result = await dao.list('<%= crud %>', null, opts);
+      done(null, {result});
+    } catch (e) {
+      errorHandler(done)(e);
+    }
   }
 
-  function findOne(args, done) {
-    dao.findOne('foo', args.fooid)
-    .then(result => done(null, {result}))
-    .catch(errorHandler(done));
+  async function findOne(args, done) {
+    try {
+      const result = await dao.findOne('<%= crud %>', args.<%= crud %>id);
+      done(null, {result});
+    } catch (e) {
+      errorHandler(done)(e);
+    }
   }
 
-  function remove(args, done) {
-    dao.remove('foo', args.fooid)
-    .then(() => done(null, {result: 'foo removed'}))
-    .catch(errorHandler(done));
+  async function remove(args, done) {
+    try {
+      await dao.remove('<%= crud %>', args.<%= crud %>id);
+      done(null, {result: '<%= crud %> removed'});
+    } catch (e) {
+      errorHandler(done)(e);
+    }
   }
 
 }

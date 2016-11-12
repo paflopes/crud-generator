@@ -1,3 +1,3 @@
-import fooRoute from './fooRoute';
+import <%= crud %>Route from './<%= crud %>Route';
 
-export default fooRoute;
+export default <%= crud %>Route;

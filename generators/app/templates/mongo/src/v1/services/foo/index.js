@@ -1,3 +1,3 @@
-import fooService from './fooService';
+import <%= crud %>Service from './<%= crud %>Service';
 
-export default fooService;
+export default <%= crud %>Service;
