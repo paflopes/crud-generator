@@ -28,7 +28,7 @@ module.exports = yeoman.Base.extend({
         name: 'database',
         message: 'What\'s the database?',
         default: 'neo4j',
-        choices: ['mongo', 'arango', 'neo4j']
+        choices: ['mongo', 'arango', 'neo4j', 'mongoose']
       }
     ];
 
@@ -49,6 +49,7 @@ module.exports = yeoman.Base.extend({
     ];
 
     this.sourceRoot(`${__dirname}/templates/${this.props.database}`);
+    var crudUpper = this.props.crud.charAt(0).toUpperCase() + this.props.crud.slice(1);
 
     tplPaths.forEach(path => {
       this.fs.copyTpl(
@@ -58,7 +59,7 @@ module.exports = yeoman.Base.extend({
           .replace(/foo/g, this.props.crud)
           .replace(/v1/g, `v${this.props.version}`)
         ),
-        {crud: this.props.crud, version: this.props.version}
+        {crud: this.props.crud, version: this.props.version, crudUpper: crudUpper}
       );
     });
   }
