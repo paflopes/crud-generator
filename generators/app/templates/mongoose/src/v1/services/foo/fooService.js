@@ -1,10 +1,5 @@
-import Promise from 'bluebird';
 import {<%= crud %>SchemaModel as <%= crud %>Schema} from '../../../models/<%= crud %>/<%= crud %>Schema';
 import mongoose from 'mongoose';
-
-mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost:27017/dbtest');
-
 
 const <%= crudUpper %> = mongoose.model('<%= crudUpper %>', <%= crud %>Schema);
 
