@@ -2,39 +2,39 @@
 import mongoose, { Schema } from 'mongoose';
 import _ from 'lodash';
 import moment from 'moment';
-import type { FooType } from './fooType';
+import type { <%= crudUpper %>Type } from './<%= crud %>Type';
 
-const fooSchema: Schema = new Schema({
+const <%= crud %>Schema: Schema = new Schema({
   bar: { type: String },
   creationTime: { type: String }
 });
 
-export const Foo = mongoose.model('Foo', fooSchema);
+export const <%= crudUpper %> = mongoose.model('<%= crudUpper %>', <%= crud %>Schema);
 
-export async function findOne(fooid: string) {
-  const foo = await Foo.findOne({ _id: fooid });
-  return foo.toObject();
+export async function findOne(<%= crud %>id: string) {
+  const <%= crud %> = await <%= crudUpper %>.findOne({ _id: <%= crud %>id });
+  return <%= crud %>.toObject();
 }
 
-export async function create(foo: FooType) {
-  const fooClone: FooType = _.cloneDeep(foo);
+export async function create(<%= crud %>: <%= crudUpper %>Type) {
+  const <%= crud %>Clone: <%= crudUpper %>Type = _.cloneDeep(<%= crud %>);
 
-  if (!fooClone.creationTime) {
-    fooClone.creationTime = moment().format();
+  if (!<%= crud %>Clone.creationTime) {
+    <%= crud %>Clone.creationTime = moment().format();
   }
 
-  const result = await Foo.create(fooClone);
+  const result = await <%= crudUpper %>.create(<%= crud %>Clone);
   return result.toObject();
 }
 
-export async function update(id: string, foo: FooType) {
-  await Foo.findByIdAndUpdate(id, foo);
-  const result = await Foo.findById(id);
+export async function update(id: string, <%= crud %>: <%= crudUpper %>Type) {
+  await <%= crudUpper %>.findByIdAndUpdate(id, <%= crud %>);
+  const result = await <%= crudUpper %>.findById(id);
   return result.toObject();
 }
 
 export async function findAll(skip: number, limit: number) {
-  let query = Foo.find({});
+  let query = <%= crudUpper %>.find({});
 
   if (skip) {
     query = query.skip(skip);
@@ -47,7 +47,7 @@ export async function findAll(skip: number, limit: number) {
   return result;
 }
 
-export async function remove(fooid: string) {
-  await Foo.findByIdAndRemove(fooid);
+export async function remove(<%= crud %>id: string) {
+  await <%= crudUpper %>.findByIdAndRemove(<%= crud %>id);
   return 'Success';
 }

@@ -1,4 +1,4 @@
 // @flow
-import Foo from './fooService';
+import <%= crudUpper %> from './<%= crud %>Service';
 
-export default Foo;
+export default <%= crudUpper %>;

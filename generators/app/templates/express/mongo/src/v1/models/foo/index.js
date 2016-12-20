@@ -1,5 +1,5 @@
 // @flow
 
-import { Foo, findOne, create, update, findAll, remove } from './foo';
+import { <%= crudUpper %>, findOne, create, update, findAll, remove } from './<%= crud %>';
 
-export { Foo, findOne, create, update, findAll, remove };
+export { <%= crudUpper %>, findOne, create, update, findAll, remove };
