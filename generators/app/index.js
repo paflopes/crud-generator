@@ -48,17 +48,31 @@ module.exports = yeoman.Base.extend({
   },
 
   writing: function () {
-    var tplPaths = [
-      'src/models/foo/fooSchema.js',
-      'src/models/foo/index.js',
-      'src/v1/services/foo/__tests__/foo.spec.js',
-      'src/v1/services/foo/fooService.js',
-      'src/v1/services/foo/index.js',
-      'src/v1/routes/foo/fooRoute.js',
-      'src/v1/routes/foo/index.js'
-    ];
+    var tplPaths;
 
-    this.sourceRoot(`${__dirname}/templates/${this.props.database}`);
+    if (this.props.framework === 'express') {
+      tplPaths = [
+        'tests/v1/foo/model.spec.js',
+        'src/v1/models/foo/foo.js',
+        'src/v1/models/foo/index.js',
+        'src/v1/models/foo/fooType.js',
+        'src/v1/services/foo/fooService.js',
+        'src/v1/services/foo/index.js'
+      ];
+
+      this.sourceRoot(`${__dirname}/templates/express/mongo`);
+    } else {
+      tplPaths = [
+        'src/models/foo/fooSchema.js',
+        'src/models/foo/index.js',
+        'src/v1/services/foo/__tests__/foo.spec.js',
+        'src/v1/services/foo/fooService.js',
+        'src/v1/services/foo/index.js',
+        'src/v1/routes/foo/fooRoute.js',
+        'src/v1/routes/foo/index.js'
+      ];
+      this.sourceRoot(`${__dirname}/templates/${this.props.database}`);
+    }
     var crudUpper = this.props.crud.charAt(0).toUpperCase() + this.props.crud.slice(1);
 
     tplPaths.forEach(path => {
