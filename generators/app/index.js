@@ -12,6 +12,13 @@ module.exports = yeoman.Base.extend({
 
     var prompts = [
       {
+        type: 'list',
+        name: 'framework',
+        message: 'What\'s the framework?',
+        default: 'express',
+        choices: ['hapi', 'express']
+      },
+      {
         type: 'input',
         name: 'version',
         message: 'What\'s the crud version?',
@@ -24,10 +31,13 @@ module.exports = yeoman.Base.extend({
         default: 'test'
       },
       {
+        when: function (response) {
+          return response.framework === 'hapi';
+        },
         type: 'list',
         name: 'database',
         message: 'What\'s the database?',
-        default: 'neo4j',
+        default: 'mongo',
         choices: ['mongo', 'arango', 'neo4j', 'mongoose']
       }
     ];
