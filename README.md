@@ -8,13 +8,13 @@ First, install [Yeoman](http://yeoman.io) and generator-crud-generator using [np
 
 ```bash
 npm install -g yo
-npm install -g simple-crud-generator
+npm install -g generator-simple-crud-generator
 ```
 
 Then generate your new project:
 
 ```bash
-yo crud-generator
+yo simple-crud-generator
 ```
 
 ## Getting To Know Yeoman
