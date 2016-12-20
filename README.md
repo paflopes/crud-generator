@@ -8,9 +8,7 @@ First, install [Yeoman](http://yeoman.io) and generator-crud-generator using [np
 
 ```bash
 npm install -g yo
-git clone git@github.com:paflopes/crud-generator.git
-cd crud-generator
-npm link
+npm install -g simple-crud-generator
 ```
 
 Then generate your new project:
